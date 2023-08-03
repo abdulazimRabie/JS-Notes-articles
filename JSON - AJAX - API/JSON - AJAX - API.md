@@ -203,3 +203,155 @@ three();
 // three
 // web api method
 ```
+
+# <span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">Callback Queue & Event Loop</span>
+
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">1</span> The callback queue, also known as the task queue, is a data structure in JavaScript that holds asynchronous callbacks waiting to be executed.
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">2</span> Whenever an asynchronous operation, such as a setTimeout or a network request, is completed, its corresponding callback function is added to the callback queue.
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">3</span> The event loop is responsible for continuously checking the callback queue and executing the callbacks in a specific order.
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">4</span> The event loop follows a single-threaded, non-blocking model of execution, allowing JavaScript to handle multiple asynchronous operations efficiently.
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">5</span> During each iteration of the event loop, it checks if the call stack is empty. If it is, it retrieves the next callback from the callback queue and pushes it onto the call stack for execution.
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">6</span> The event loop ensures that the callbacks are executed in the order they were added to the callback queue, thus maintaining the correct sequence of operations.
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">7</span> The event loop also handles other phases, such as timers, I/O events, and process.nextTick, along with the callback queue.
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">8</span> Web APIs, like setTimeout, XMLHttpRequest, or fetch, are responsible for executing asynchronous operations outside the JavaScript runtime environment and adding the corresponding callbacks to the callback queue.
+
+```JS
+console.log("hi");
+
+setTimeout(() => {
+  console.log("one");
+}, 20);
+
+setTimeout(() => {
+  console.log("two");
+}, 0);
+
+console.log("bye");
+/*
+  hi
+  bye
+  two
+  one
+*/
+```
+
+```JS
+console.log(num);
+let num = 1;
+num += 1;
+/*
+  Error: Cannot access 'num' before declaration
+*/
+```
+
+```JS
+setTimeout(function() {
+  console.log(num);
+}, 0)
+let num = 1;
+num += 1;
+/*
+  2
+*/
+```
+> Web APIs includes synchronous and a synchronous function
+> - setTimeout is an asynchronous function
+> - console is synchronous function
+>
+> So asynchronous function goes to web api stack and goes callback queue in order then event loop decides which function will be executed after asure the the callback stack is empty
+
+# <span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">AJAX</span>
+- Stands for ( Asynchronous JavaScript And XML )
+- It's an approach to use many technologies together [HTML - CSS - JS - DOM]
+- It uses "XMLHttpRequest" object to interact with the server
+- You can fetch data and send it without page refresh
+- Examples
+  - Youtube Studio
+  - Google Drive
+  - Upload Article Photo
+  - Form Check Name
+```Js
+let req = new XMLHttpRequest();
+console.log(req);
+```
+
+Each request has status code, the value of status code explains if the respons is succesful or not 
+
+### Requst and response from real API
+
+##### Ready State - Status of the request
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">[0]</span> Request not intialized
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">[1]</span> Server connection established
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">[2]</span> Request recieved
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">[3]</span> Processing request
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">[4]</span> Request is finsished and response is ready
+
+##### Status
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">[200]</span> Response is successful
+
+<span style="background-color:#fce4ec; color: #000; border-radius: 5px; padding: 4px">[404]</span> Not found
+
+```Js
+let req = new XMLHttpRequest();
+req.open("GET", "https://api.github.com/users/abdulazimrabie/repos");
+req.send(); // it intialize the request
+console.log(req);
+```
+
+```Js
+req.onreadystatechange = () => {
+  console.log(req.readyState);
+  console.log(req.status);
+  console.log("#####");
+}
+/*
+  2 => request is recieved 
+  200
+  #####
+  3 => request is proccessing
+  200
+  #####
+  4 => request is finished and response is ready
+  200
+  #####
+*/
+```
+
+```JS
+req.onreadystatechange = function() {
+  if (req.status === 200 && req.readyState === 4)
+    console.log(this.responseText);
+}
+// That will return respone object as a text to deal with it and manipulate with data
+```
+
+Loop on Data from real API
+```Js
+let req = new XMLHttpRequest();
+req.open("GET", "https://api.github.com/users/abdulazimrabie/repos");
+req.send();
+
+req.onreadystatechange = function() {
+  if (req.status === 200 && req.readyState === 4){
+    let obj = JSON.parse(req.responseText);
+    console.log(obj);
+    for(let item of obj) {
+      console.log(item["full_name"]);
+    }
+  }
+}
+```
