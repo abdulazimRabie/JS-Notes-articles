@@ -431,6 +431,8 @@ for(let prop in obj) {
 You Cannot delete property
 You Cannot redefine it
 
+==The configurable property tells whether the user has permission to change property descriptor such as to change the value of writable and enumerable settings.==
+
 > delete proprty
 ```JS
 const obj = {
@@ -449,13 +451,6 @@ delete obj.c;
 
 console.log(obj); // {a:1, b:2, c:3}
 ```
-
-> Redefine property
-المقصود بده انك تغير واحدة من 
-writable - enumerable - configurable
-يعنى لو غيرت ال value عادى 
-ايوة لان ده مش redifine
-
 ```JS
 Object.defineProperty(obj, 'c', {
   writable: true,
